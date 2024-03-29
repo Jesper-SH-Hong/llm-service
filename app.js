@@ -1,28 +1,31 @@
-const http = require("http");
-const url = require("url");
+const express = require('express');
+const bodyParser = require('body-parser');
+require("dotenv").config();
 
-class LLMService {
-  constructor() {
-    this.port = process.env.PORT || 3000;
-  }
+const app = express();
+const port = process.env.PORT || 5000;
 
-  start() {
-    const server = http.createServer((req, res) => {
-      const q = url.parse(req.url, true);
+// Body parser middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+app.get('/paraphrase', async (req, res) => {
+  const prompt = req.query.action + ": " + req.query.text;
+  const data = { "inputs": prompt };
+  const response = await fetch(
+    "https://api-inference.huggingface.co/models/grammarly/coedit-large",
+    {
+      headers: { Authorization: `Bearer ${process.env.GRAMMARLY_API_KEY}` },
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+  const result = await response.json();
+  res.status(200).send(result[0]);
+});
 
-      res.writeHead(200, { "Content-Type": "text/plain" });
-      let message = "LLM Gateway serviceE\n";
-      let version = "NodeJS " + process.versions.node + "\n";
-      let response = [message, version].join("\n");
-      res.end(response);
-    });
 
-    server.listen(this.port);
-  }
-}
-
-const server = new LLMService();
-server.start();
+// Start server
+app.listen(port, () => {
+  console.log(`LLM Service is running on port ${port}`);
+});
