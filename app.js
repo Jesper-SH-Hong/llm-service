@@ -1,6 +1,6 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fetch = require('fetch');
+const express = require("express");
+const bodyParser = require("body-parser");
+const axios = require("axios"); // axios 패키지 import
 require("dotenv").config();
 
 const app = express();
@@ -10,21 +10,24 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/paraphrase', async (req, res) => {
+app.get("/paraphrase", async (req, res) => {
   const prompt = req.query.action + ": " + req.query.text;
-  const data = { "inputs": prompt };
-  const response = await fetch(
-    "https://api-inference.huggingface.co/models/grammarly/coedit-large",
-    {
-      headers: { Authorization: `Bearer ${process.env.GRAMMARLY_API_KEY}` },
-      method: "POST",
-      body: JSON.stringify(data),
-    }
-  );
-  const result = await response.json();
-  res.status(200).send(result[0]);
+  const data = { inputs: prompt };
+  try {
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/grammarly/coedit-large",
+      data,
+      {
+        headers: { Authorization: `Bearer ${process.env.GRAMMARLY_API_KEY}` },
+      }
+    );
+    const result = response.data;
+    res.status(200).send(result[0]);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("An error occurred while processing the request.");
+  }
 });
-
 
 // Start server
 app.listen(port, () => {
