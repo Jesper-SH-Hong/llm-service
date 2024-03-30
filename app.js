@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const axios = require("axios"); // axios 패키지 import
+const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
