@@ -27,7 +27,7 @@ app.post("/paraphrase", async (req, res) => {
   }
 });
 
-async function fetchDataWithRetry(url, data, config, retries = 3, delay = 1000) {
+async function fetchDataWithRetry(url, data, config, retries = 10, delay = 3000) {
   try {
     const response = await axios.post(url, data, config);
     return response.data;
