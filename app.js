@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const axios = require("axios");
 const MESSAGES = require("./lang/messages/en/user");
 const ERROR = require("./enums/errorEnum");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
@@ -10,6 +11,7 @@ const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 app.post("/paraphrase", async (req, res) => {
   const prompt = req.body.action + ": " + req.body.text;
