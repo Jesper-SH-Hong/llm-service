@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
+const MESSAGES = require("./lang/messages/en/user");
+const ERROR = require("./enums/errorEnum");
 require("dotenv").config();
 
 const app = express();
@@ -18,10 +20,10 @@ app.post("/paraphrase", async (req, res) => {
   
   try {
     const result = await fetchDataWithRetry("https://api-inference.huggingface.co/models/grammarly/coedit-large", data, config);
-    res.status(200).send(result[0]);
+    res.status(ERROR.SUCCESS).send(result[0]);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).send("An error occurred while processing the request.");
+    res.status(ERROR.INTERNAL_SERVER_ERROR).send(MESSAGES.INTERNAL_SERVER_ERROR);
   }
 });
 
