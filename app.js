@@ -7,13 +7,13 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
+axiosRetry(axios, { retries: 5, retryDelay: axiosRetry.exponentialDelay });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/paraphrase", async (req, res) => {
-  const prompt = req.query.action + ": " + req.query.text;
+app.post("/paraphrase", async (req, res) => {
+  const prompt = req.body.action + ": " + req.body.text;
   const data = { inputs: prompt };
   try {
     const response = await axios.post(
