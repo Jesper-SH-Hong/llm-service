@@ -9,8 +9,10 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN.split(", ") || ['http://localhost:3001', 'http://localhost:8000'],
+  origin: ['https://rephrasify.netlify.app', 'https://api.jesperhong.com', 'http://localhost:3000'],
   credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(bodyParser.json());
@@ -51,4 +53,5 @@ async function fetchDataWithRetry(url, data, config, retries = 10, delay = 3000)
 // Start server
 app.listen(port, () => {
   console.log(`LLM Service is running on port ${port}`);
+  console.log("process.env.GRAMMARLY_API_KEY: ", process.env.GRAMMARLY_API_KEY)
 });
